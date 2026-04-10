@@ -289,17 +289,24 @@
 
   <!-- PLAYING SCREEN -->
   <div id="screen-playing" class="screen">
-    <p class="type-hint">Type the word and press Enter</p>
+    <p class="type-hint" id="type-hint">Type the word and press Enter</p>
     <div id="word-display">word</div>
-    <div style="display:flex;gap:0.5rem;width:100%;">
+    <div id="type-input-row" style="display:flex;gap:0.5rem;width:100%;">
       <input type="text" id="type-input" placeholder="Type here..." autocomplete="off" autocorrect="off" spellcheck="false" style="flex:1;" />
       <button class="btn-primary" id="submit-word-btn" style="width:auto;padding:0.85rem 1.4rem;font-size:1.2rem;">GO</button>
     </div>
+    <p id="spectator-label" style="color:var(--danger);font-size:1.2rem;font-weight:700;display:none;">You are spectating</p>
     <div id="submission-feed"></div>
     <div class="player-list" style="margin-top:0.5rem;">
       <h3>Still typing<span class="waiting-dots"></span></h3>
       <div id="playing-player-list"></div>
     </div>
+  </div>
+
+  <!-- ELIMINATED SCREEN (shown to the eliminated player) -->
+  <div id="screen-eliminated" class="screen">
+    <img id="eliminated-img" src="/luuk.png" alt="Too slow!" style="width:300px;border-radius:16px;" />
+    <div style="font-size:3rem;font-weight:900;color:var(--danger);text-align:center;margin-top:1rem;">YOU ARE TOO SLOW!</div>
   </div>
 
   <!-- RESULTS SCREEN -->
@@ -481,14 +488,24 @@
 
     socket.on('round-start', ({ word }) => {
       hasSubmitted = false;
-      isAlive = true; // if they're seeing this they're still alive
       $('word-display').textContent = word;
-      $('type-input').value = '';
-      $('type-input').disabled = false;
-      $('type-input').classList.remove('error');
       $('submission-feed').innerHTML = '';
-      showScreen('playing');
-      setTimeout(() => $('type-input').focus(), 100);
+
+      if (isAlive) {
+        $('type-input').value = '';
+        $('type-input').disabled = false;
+        $('type-input').classList.remove('error');
+        $('type-input-row').style.display = 'flex';
+        $('type-hint').style.display = '';
+        $('spectator-label').style.display = 'none';
+        showScreen('playing');
+        setTimeout(() => $('type-input').focus(), 100);
+      } else {
+        $('type-input-row').style.display = 'none';
+        $('type-hint').style.display = 'none';
+        $('spectator-label').style.display = '';
+        showScreen('playing');
+      }
     });
 
     socket.on('player-submitted', ({ nickname, elapsed }) => {
@@ -552,8 +569,11 @@
       const banner = $('eliminated-banner');
       if (eliminatedNickname) {
         if (eliminatedNickname === myNickname) {
-          banner.textContent = 'You\'ve been eliminated!';
           isAlive = false;
+          const elimImages = ['/luuk.png', '/kim.png', '/luuk2.png'];
+          $('eliminated-img').src = elimImages[Math.floor(Math.random() * elimImages.length)];
+          showScreen('eliminated');
+          return;
         } else {
           banner.textContent = eliminatedNickname + ' is out!';
         }
