@@ -286,7 +286,10 @@
   <div id="screen-playing" class="screen">
     <p class="type-hint">Type the word and press Enter</p>
     <div id="word-display">word</div>
-    <input type="text" id="type-input" placeholder="Type here..." autocomplete="off" autocorrect="off" spellcheck="false" />
+    <div style="display:flex;gap:0.5rem;width:100%;">
+      <input type="text" id="type-input" placeholder="Type here..." autocomplete="off" autocorrect="off" spellcheck="false" style="flex:1;" />
+      <button class="btn-primary" id="submit-word-btn" style="width:auto;padding:0.85rem 1.4rem;font-size:1.2rem;">GO</button>
+    </div>
     <div id="submission-feed"></div>
     <div class="player-list" style="margin-top:0.5rem;">
       <h3>Still typing<span class="waiting-dots"></span></h3>
@@ -406,13 +409,17 @@
     }
 
     // TYPE INPUT
+    function submitWord() {
+      if (hasSubmitted) return;
+      const word = $('type-input').value;
+      socket.emit('submit-word', { word });
+    }
+
     $('type-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        if (hasSubmitted) return;
-        const word = $('type-input').value;
-        socket.emit('submit-word', { word });
-      }
+      if (e.key === 'Enter') submitWord();
     });
+
+    $('submit-word-btn').addEventListener('click', submitWord);
 
     // START
     $('start-btn').addEventListener('click', () => {
