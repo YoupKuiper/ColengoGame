@@ -9,7 +9,7 @@ const io = new Server(server);
 app.use(express.static('public'));
 
 const WORDS = [
-  'colengo', 'configure', 'ecommerce', 'platform', 'dealer', 'showroom',
+  'better together', 'colengo', 'configure', 'ecommerce', 'platform', 'dealer', 'showroom',
   'portal', 'dashboard', 'pricing', 'catalog', 'checkout', 'loyalty',
   'blender', 'texture', 'render', 'visualize', 'preview', 'customize',
   'manufacturer', 'furniture', 'integration', 'automate', 'scalable',
@@ -17,7 +17,7 @@ const WORDS = [
   'orders', 'digital', 'channel', 'modules', 'assets', 'product',
   'commerce', 'cloud', 'network', 'optimize', 'augmented', 'virtual',
   'factory', 'design', 'model', 'retail', 'wholesale', 'storefront',
-  'shipping', 'domain', 'customer', 'supplier', 'backend', 'frontend',
+  'shipping', 'domain', 'customer', 'supplier', 'backend', 'frontend', 'BMW X3'
 ];
 
 // players[socketId] = { nickname, isAdmin, isAlive }
