@@ -20,7 +20,7 @@ const WORDS = [
   'shipping', 'domain', 'customer', 'supplier', 'backend', 'frontend', 'BMW X3',
   'Teerawut', 'Thitaya', 'Usanisa', 'Wannarat', 'Wanthani', 'Wanwisa', 'Weereereen', 'Youp',
   'Patsiri', 'Pattiya', 'Pitcha', 'Ploynapat', 'Puriwong', 'Raweewan', 'Sander', 'Siriya',
-  'Bandid', 'Date', 'Dylan', 'FHA', 'Jan', 'Kankamon', 'Kawinpat',
+  'Bandid', 'Date', 'Dylan', 'Fha', 'Jan', 'Kankamon', 'Kawinpat',
   'Leon', 'Luuk', 'Maarten', 'Natthapon', 'Nira', 'Nutchanun'
 ];
 

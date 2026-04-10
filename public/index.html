@@ -264,15 +264,20 @@
   <div id="screen-lobby" class="screen">
     <img src="https://colengo.com/_im/42113.png" alt="Colengo" class="logo" />
     <h1>ColenGO Type!</h1>
-    <p class="subtitle">Waiting for players<span class="waiting-dots"></span></p>
-    <div class="card" style="display:flex;flex-direction:column;gap:1rem;">
-      <div class="player-list">
-        <h3>Players</h3>
-        <div id="lobby-player-list"></div>
+    <p class="subtitle">Scan to join<span class="waiting-dots"></span></p>
+    <div style="display:flex;gap:1.5rem;align-items:flex-start;width:100%;max-width:700px;">
+      <div style="flex-shrink:0;background:#fff;border-radius:16px;padding:12px;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://colengogame-production.up.railway.app/" alt="Scan to join" style="display:block;width:250px;height:250px;" />
       </div>
-      <button class="btn-success" id="start-btn" style="display:none;">Start Game</button>
-      <p id="start-hint" class="info-text" style="display:none;">Need at least 2 players to start.</p>
-      <p id="lobby-error" style="color:var(--danger);font-size:0.85rem;text-align:center;display:none;"></p>
+      <div class="card" style="display:flex;flex-direction:column;gap:1rem;flex:1;">
+        <div class="player-list">
+          <h3>Players</h3>
+          <div id="lobby-player-list"></div>
+        </div>
+        <button class="btn-success" id="start-btn" style="display:none;">Start Game</button>
+        <p id="start-hint" class="info-text" style="display:none;">Need at least 2 players to start.</p>
+        <p id="lobby-error" style="color:var(--danger);font-size:0.85rem;text-align:center;display:none;"></p>
+      </div>
     </div>
   </div>
 
