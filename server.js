@@ -9,13 +9,15 @@ const io = new Server(server);
 app.use(express.static('public'));
 
 const WORDS = [
-  'apple', 'bridge', 'cloud', 'dragon', 'elephant', 'forest', 'guitar',
-  'horizon', 'island', 'jungle', 'kitchen', 'lemon', 'mountain', 'navigate',
-  'ocean', 'planet', 'quarter', 'rainbow', 'shadow', 'thunder', 'umbrella',
-  'village', 'whisper', 'yellow', 'zebra', 'rocket', 'frozen', 'blizzard',
-  'champion', 'dagger', 'eclipse', 'falcon', 'glacier', 'harvest', 'ignite',
-  'lantern', 'mirage', 'nebula', 'odyssey', 'phantom', 'quartz', 'revolt',
-  'serpent', 'tornado', 'utopia', 'vortex', 'walrus', 'xenon', 'zenith'
+  'colengo', 'configure', 'ecommerce', 'platform', 'dealer', 'showroom',
+  'portal', 'dashboard', 'pricing', 'catalog', 'checkout', 'loyalty',
+  'blender', 'texture', 'render', 'visualize', 'preview', 'customize',
+  'manufacturer', 'furniture', 'integration', 'automate', 'scalable',
+  'analytics', 'oneCORE', 'workflow', 'inventory', 'landing', 'deploy',
+  'orders', 'digital', 'channel', 'modules', 'assets', 'product',
+  'commerce', 'cloud', 'network', 'optimize', 'augmented', 'virtual',
+  'factory', 'design', 'model', 'retail', 'wholesale', 'storefront',
+  'shipping', 'domain', 'customer', 'supplier', 'backend', 'frontend',
 ];
 
 // players[socketId] = { nickname, isAdmin, isAlive }
