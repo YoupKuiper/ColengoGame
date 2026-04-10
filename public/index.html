@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypeKnock</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a24;
+      --border: #2e2e42;
+      --accent: #6c63ff;
+      --accent-light: #8f88ff;
+      --danger: #ff4f6d;
+      --success: #3ecf8e;
+      --text: #e8e8f0;
+      --muted: #7070a0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--accent-light), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .screen { display: none; flex-direction: column; align-items: center; gap: 1.25rem; width: 100%; max-width: 560px; }
+    .screen.active { display: flex; }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.85rem 1.1rem;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 1.1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus { border-color: var(--accent); }
+    input[type="text"].error { border-color: var(--danger); animation: shake 0.3s; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-danger  { background: var(--danger); color: #fff; }
+    .btn-success { background: var(--success); color: #0f1a14; }
+
+    /* Player list */
+    .player-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .player-list h3 {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.25rem;
+    }
+
+    .player-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .player-item .badge {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+    .badge-admin  { background: var(--accent); color: #fff; }
+    .badge-out    { background: var(--danger); color: #fff; }
+    .badge-done   { background: var(--success); color: #0f1a14; }
+
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      flex-shrink: 0;
+    }
+    .dot.out { background: var(--danger); }
+
+    /* Countdown */
+    #countdown-number {
+      font-size: 8rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--accent-light);
+      animation: pop 0.4s ease-out;
+    }
+
+    @keyframes pop {
+      0%   { transform: scale(1.5); opacity: 0; }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+
+    /* Word display */
+    #word-display {
+      font-size: 3.5rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: var(--text);
+      text-align: center;
+      padding: 1rem 2rem;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .type-hint { color: var(--muted); font-size: 0.9rem; }
+
+    #type-input {
+      font-size: 1.4rem;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    /* Submission feed */
+    #submission-feed {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .feed-item {
+      font-size: 0.85rem;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .feed-item::before { content: '✓'; }
+
+    /* Results */
+    .result-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 100%;
+    }
+    .result-row.eliminated { border-color: var(--danger); background: rgba(255,79,109,0.08); }
+    .result-row .rank { color: var(--muted); font-size: 0.85rem; width: 24px; }
+    .result-row .name { flex: 1; margin-left: 0.5rem; }
+    .result-row .time { color: var(--muted); font-size: 0.9rem; font-family: monospace; }
+    .result-row .elim-tag { color: var(--danger); font-weight: 700; font-size: 0.8rem; }
+
+    #eliminated-banner {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--danger);
+      text-align: center;
+    }
+
+    /* Game over */
+    #winner-name {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--success);
+    }
+
+    #trophy { font-size: 4rem; }
+
+    .info-text { color: var(--muted); font-size: 0.9rem; text-align: center; }
+
+    /* Waiting indicator */
+    .waiting-dots::after {
+      content: '';
+      animation: dots 1.2s infinite;
+    }
+    @keyframes dots {
+      0%   { content: ''; }
+      33%  { content: '.'; }
+      66%  { content: '..'; }
+      100% { content: '...'; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- JOIN SCREEN -->
+  <div id="screen-join" class="screen active">
+    <h1>TypeKnock</h1>
+    <p class="subtitle">Type fast. Survive. Win.</p>
+    <div class="card" style="display:flex;flex-direction:column;gap:1rem;">
+      <input type="text" id="nickname-input" placeholder="Enter your nickname" maxlength="20" autocomplete="off" />
+      <button class="btn-primary" id="join-btn">Join Game</button>
+      <p id="join-error" style="color:var(--danger);font-size:0.85rem;text-align:center;display:none;"></p>
+    </div>
+  </div>
+
+  <!-- LOBBY SCREEN -->
+  <div id="screen-lobby" class="screen">
+    <h1>TypeKnock</h1>
+    <p class="subtitle">Waiting for players<span class="waiting-dots"></span></p>
+    <div class="card" style="display:flex;flex-direction:column;gap:1rem;">
+      <div class="player-list">
+        <h3>Players</h3>
+        <div id="lobby-player-list"></div>
+      </div>
+      <button class="btn-success" id="start-btn" style="display:none;">Start Game</button>
+      <p id="start-hint" class="info-text" style="display:none;">Need at least 2 players to start.</p>
+      <p id="lobby-error" style="color:var(--danger);font-size:0.85rem;text-align:center;display:none;"></p>
+    </div>
+  </div>
+
+  <!-- COUNTDOWN SCREEN -->
+  <div id="screen-countdown" class="screen">
+    <p style="color:var(--muted);font-size:1rem;margin-bottom:-1rem;">Get ready!</p>
+    <div id="countdown-number">3</div>
+  </div>
+
+  <!-- PLAYING SCREEN -->
+  <div id="screen-playing" class="screen">
+    <p class="type-hint">Type the word and press Enter</p>
+    <div id="word-display">word</div>
+    <input type="text" id="type-input" placeholder="Type here..." autocomplete="off" autocorrect="off" spellcheck="false" />
+    <div id="submission-feed"></div>
+    <div class="player-list" style="margin-top:0.5rem;">
+      <h3>Still typing<span class="waiting-dots"></span></h3>
+      <div id="playing-player-list"></div>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="screen-results" class="screen">
+    <p style="color:var(--muted);font-size:0.9rem;">Round over</p>
+    <div id="eliminated-banner"></div>
+    <div id="results-list" style="width:100%;display:flex;flex-direction:column;gap:0.5rem;"></div>
+    <p class="info-text waiting-dots">Next round starting</p>
+  </div>
+
+  <!-- GAME OVER SCREEN -->
+  <div id="screen-gameover" class="screen">
+    <div id="trophy">🏆</div>
+    <p style="color:var(--muted);">Winner</p>
+    <div id="winner-name"></div>
+    <button class="btn-primary" id="play-again-btn" style="max-width:220px;margin-top:1rem;display:none;">Back to Lobby</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // State
+    let myIsAdmin = false;
+    let myNickname = '';
+    let hasSubmitted = false;
+    let isAlive = true;
+
+    // DOM helpers
+    const $ = (id) => document.getElementById(id);
+
+    function showScreen(name) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      $('screen-' + name).classList.add('active');
+    }
+
+    function renderPlayerList(containerId, players, showDone = false) {
+      const container = $(containerId);
+      container.innerHTML = '';
+      players.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'player-item';
+
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (p.isAlive ? '' : ' out');
+
+        const name = document.createElement('span');
+        name.textContent = p.nickname;
+        name.style.flex = '1';
+
+        div.appendChild(dot);
+        div.appendChild(name);
+
+        if (p.isAdmin) {
+          const badge = document.createElement('span');
+          badge.className = 'badge badge-admin';
+          badge.textContent = 'HOST';
+          div.appendChild(badge);
+        }
+
+        if (!p.isAlive) {
+          const badge = document.createElement('span');
+          badge.className = 'badge badge-out';
+          badge.textContent = 'OUT';
+          div.appendChild(badge);
+        }
+
+        container.appendChild(div);
+      });
+    }
+
+    function updatePlayingList(players) {
+      const container = $('playing-player-list');
+      container.innerHTML = '';
+      players.filter(p => p.isAlive).forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'player-item';
+        div.id = 'pp-' + p.id;
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        const name = document.createElement('span');
+        name.textContent = p.nickname;
+        div.appendChild(dot);
+        div.appendChild(name);
+        container.appendChild(div);
+      });
+    }
+
+    function markPlayerDone(nickname) {
+      const items = document.querySelectorAll('#playing-player-list .player-item');
+      items.forEach(item => {
+        if (item.querySelector('span:last-child')?.textContent === nickname ||
+            item.textContent.trim().startsWith(nickname)) {
+          item.style.opacity = '0.35';
+        }
+      });
+    }
+
+    // JOIN
+    $('join-btn').addEventListener('click', joinGame);
+    $('nickname-input').addEventListener('keydown', e => { if (e.key === 'Enter') joinGame(); });
+
+    function joinGame() {
+      const nick = $('nickname-input').value.trim();
+      if (!nick) {
+        $('join-error').textContent = 'Please enter a nickname.';
+        $('join-error').style.display = 'block';
+        return;
+      }
+      myNickname = nick;
+      socket.emit('join-lobby', { nickname: nick });
+    }
+
+    // TYPE INPUT
+    $('type-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        if (hasSubmitted) return;
+        const word = $('type-input').value;
+        socket.emit('submit-word', { word });
+      }
+    });
+
+    // START
+    $('start-btn').addEventListener('click', () => {
+      socket.emit('start-game');
+    });
+
+    // PLAY AGAIN
+    $('play-again-btn').addEventListener('click', () => {
+      showScreen('lobby');
+    });
+
+    // ---- SOCKET EVENTS ----
+
+    socket.on('joined', ({ isAdmin, players, gameState }) => {
+      myIsAdmin = isAdmin;
+      isAlive = true;
+      renderPlayerList('lobby-player-list', players);
+      updateStartBtn(players, isAdmin);
+      showScreen('lobby');
+    });
+
+    socket.on('player-joined', ({ players }) => {
+      renderPlayerList('lobby-player-list', players);
+      updateStartBtn(players, myIsAdmin);
+    });
+
+    socket.on('player-left', ({ players }) => {
+      renderPlayerList('lobby-player-list', players);
+      updateStartBtn(players, myIsAdmin);
+    });
+
+    socket.on('promoted-to-admin', () => {
+      myIsAdmin = true;
+      $('start-btn').style.display = 'block';
+    });
+
+    socket.on('error-msg', ({ msg }) => {
+      $('lobby-error').textContent = msg;
+      $('lobby-error').style.display = 'block';
+      setTimeout(() => { $('lobby-error').style.display = 'none'; }, 3000);
+    });
+
+    socket.on('countdown-start', () => {
+      showScreen('countdown');
+    });
+
+    socket.on('countdown-tick', ({ count }) => {
+      const el = $('countdown-number');
+      el.textContent = count;
+      el.style.animation = 'none';
+      void el.offsetWidth; // reflow
+      el.style.animation = 'pop 0.4s ease-out';
+    });
+
+    socket.on('round-start', ({ word }) => {
+      hasSubmitted = false;
+      isAlive = true; // if they're seeing this they're still alive
+      $('word-display').textContent = word;
+      $('type-input').value = '';
+      $('type-input').disabled = false;
+      $('type-input').classList.remove('error');
+      $('submission-feed').innerHTML = '';
+      showScreen('playing');
+      setTimeout(() => $('type-input').focus(), 100);
+    });
+
+    socket.on('player-submitted', ({ nickname, elapsed }) => {
+      // Add to feed
+      const div = document.createElement('div');
+      div.className = 'feed-item';
+      div.textContent = `${nickname} — ${(elapsed / 1000).toFixed(3)}s`;
+      $('submission-feed').prepend(div);
+      markPlayerDone(nickname);
+    });
+
+    socket.on('submission-accepted', ({ elapsed }) => {
+      hasSubmitted = true;
+      $('type-input').disabled = true;
+      $('type-input').style.borderColor = 'var(--success)';
+    });
+
+    socket.on('submission-rejected', () => {
+      const inp = $('type-input');
+      inp.classList.remove('error');
+      void inp.offsetWidth;
+      inp.classList.add('error');
+      setTimeout(() => inp.classList.remove('error'), 400);
+    });
+
+    socket.on('round-result', ({ results, eliminatedNickname, players }) => {
+      // Build results UI
+      const list = $('results-list');
+      list.innerHTML = '';
+
+      results.forEach((r, i) => {
+        const row = document.createElement('div');
+        row.className = 'result-row' + (r.eliminated ? ' eliminated' : '');
+
+        const rank = document.createElement('span');
+        rank.className = 'rank';
+        rank.textContent = '#' + (i + 1);
+
+        const name = document.createElement('span');
+        name.className = 'name';
+        name.textContent = r.nickname;
+
+        const time = document.createElement('span');
+        time.className = 'time';
+        time.textContent = r.elapsed != null ? (r.elapsed / 1000).toFixed(3) + 's' : 'DNF';
+
+        row.appendChild(rank);
+        row.appendChild(name);
+        row.appendChild(time);
+
+        if (r.eliminated) {
+          const tag = document.createElement('span');
+          tag.className = 'elim-tag';
+          tag.textContent = '☠ OUT';
+          row.appendChild(tag);
+        }
+
+        list.appendChild(row);
+      });
+
+      const banner = $('eliminated-banner');
+      if (eliminatedNickname) {
+        if (eliminatedNickname === myNickname) {
+          banner.textContent = 'You\'ve been eliminated!';
+          isAlive = false;
+        } else {
+          banner.textContent = eliminatedNickname + ' is out!';
+        }
+      } else {
+        banner.textContent = '';
+      }
+
+      showScreen('results');
+    });
+
+    socket.on('game-over', ({ winner, players }) => {
+      $('winner-name').textContent = winner;
+      $('play-again-btn').style.display = myIsAdmin ? 'block' : 'none';
+      renderPlayerList('lobby-player-list', players);
+      updateStartBtn(players, myIsAdmin);
+      showScreen('gameover');
+
+      // Non-admin: auto-return to lobby after 5s
+      if (!myIsAdmin) {
+        setTimeout(() => showScreen('lobby'), 5000);
+      }
+    });
+
+    socket.on('back-to-lobby', ({ players }) => {
+      renderPlayerList('lobby-player-list', players);
+      updateStartBtn(players, myIsAdmin);
+      showScreen('lobby');
+    });
+
+    function updateStartBtn(players, isAdmin) {
+      const btn = $('start-btn');
+      const hint = $('start-hint');
+      const alive = players.filter(p => p.isAlive);
+      if (isAdmin) {
+        btn.style.display = 'block';
+        btn.disabled = alive.length < 2;
+        if (alive.length < 2) {
+          hint.style.display = 'block';
+        } else {
+          hint.style.display = 'none';
+        }
+      } else {
+        btn.style.display = 'none';
+        hint.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
