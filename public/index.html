@@ -306,7 +306,7 @@
   <!-- ELIMINATED SCREEN (shown to the eliminated player) -->
   <div id="screen-eliminated" class="screen">
     <img id="eliminated-img" src="/luuk.png" alt="Too slow!" style="width:300px;border-radius:16px;" />
-    <div style="font-size:3rem;font-weight:900;color:var(--danger);text-align:center;margin-top:1rem;">YOU ARE TOO SLOW!</div>
+    <div style="font-size:3rem;font-weight:900;color:var(--danger);text-align:center;margin-top:1rem;">YOU ARE FIRED!</div>
   </div>
 
   <!-- RESULTS SCREEN -->
@@ -570,7 +570,7 @@
       if (eliminatedNickname) {
         if (eliminatedNickname === myNickname) {
           isAlive = false;
-          const elimImages = ['/luuk.png', '/kim.png', '/luuk2.png'];
+          const elimImages = ['/luuk.png', '/kim.png', '/luuk2.png', '/leon.png', '/luuk3.png'];
           $('eliminated-img').src = elimImages[Math.floor(Math.random() * elimImages.length)];
           showScreen('eliminated');
           return;
