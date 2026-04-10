@@ -9,7 +9,7 @@ const io = new Server(server);
 app.use(express.static('public'));
 
 const WORDS = [
-  'better together', 'colengo', 'configure', 'ecommerce', 'platform', 'dealer', 'showroom',
+  'better together', 'kor kaeng', 'colengo', 'configure', 'ecommerce', 'platform', 'dealer', 'showroom',
   'portal', 'dashboard', 'pricing', 'catalog', 'checkout', 'loyalty',
   'blender', 'texture', 'render', 'visualize', 'preview', 'customize',
   'manufacturer', 'furniture', 'integration', 'automate', 'scalable',
@@ -17,7 +17,11 @@ const WORDS = [
   'orders', 'digital', 'channel', 'modules', 'assets', 'product',
   'commerce', 'cloud', 'network', 'optimize', 'augmented', 'virtual',
   'factory', 'design', 'model', 'retail', 'wholesale', 'storefront',
-  'shipping', 'domain', 'customer', 'supplier', 'backend', 'frontend', 'BMW X3'
+  'shipping', 'domain', 'customer', 'supplier', 'backend', 'frontend', 'BMW X3',
+  'Teerawut', 'Thitaya', 'Usanisa', 'Wannarat', 'Wanthani', 'Wanwisa', 'Weereereen', 'Youp',
+  'Patsiri', 'Pattiya', 'Pitcha', 'Ploynapat', 'Puriwong', 'Raweewan', 'Sander', 'Siriya',
+  'Bandid', 'Date', 'Dylan', 'FHA', 'Jan', 'Kankamon', 'Kawinpat',
+  'Leon', 'Luuk', 'Maarten', 'Natthapon', 'Nira', 'Nutchanun'
 ];
 
 // players[socketId] = { nickname, isAdmin, isAlive }
